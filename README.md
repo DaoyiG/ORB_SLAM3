@@ -1,4 +1,4 @@
-###Comments for the project:
+### Comments for the project:
 1. add more comments  
 2. possible bug? Frame.cc 837 in this loop, should we use mvKeysUn instead of mvKeys? Because we apply the depth calculated from mvKeys to mvKeysUn in Frame::UnprojectStereo   
 3. need to decide which depth we really need:  

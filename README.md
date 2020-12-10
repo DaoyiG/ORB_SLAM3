@@ -1,3 +1,9 @@
+###Comments for the project:
+1. add more comments  
+2. possible bug? Frame.cc 837 in this loop, should we use mvKeysUn instead of mvKeys? Because we apply the depth calculated from mvKeys to mvKeysUn in Frame::UnprojectStereo   
+3. need to decide which depth we really need:  
+   Frame.cc 958 calculate depth based on baseline * fx / disparity and after line 976, the remaining positive values in mvDepth should be the depth of the matched keypoints
+
 # ORB-SLAM3
 
 ### V0.3: Beta version, 4 Sep 2020

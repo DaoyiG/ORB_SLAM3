@@ -44,7 +44,7 @@ lib/
 
 cmake_modules/
 cmake-build-debug/
-
+cmake-build-release/
 *.pyc
 *.osa
 Dataset/*

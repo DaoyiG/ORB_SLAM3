@@ -1937,7 +1937,7 @@ void Tracking::StereoInitialization()
             mCurrentFrame.SetImuPoseVelocity(Rwb0, twb0, cv::Mat::zeros(3,1,CV_32F));
         }
         else
-            mCurrentFrame.SetPose(cv::Mat::eye(4,4,CV_32F));
+            mCurrentFrame.SetPose(cv::Mat::eye(4,4,CV_32F)); // without IMU, so set the pose to Identity
 
         // Create KeyFrame
         KeyFrame* pKFini = new KeyFrame(mCurrentFrame,mpAtlas->GetCurrentMap(),mpKeyFrameDB);

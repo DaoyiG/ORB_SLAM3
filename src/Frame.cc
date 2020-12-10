@@ -803,6 +803,7 @@ void Frame::ComputeStereoMatches()
     const int nRows = mpORBextractorLeft->mvImagePyramid[0].rows;
 
     //Assign keypoints to row table
+    //Instead of searching on a single line, this would search on a 'thick' line
     vector<vector<size_t> > vRowIndices(nRows,vector<size_t>());
 
     for(int i=0; i<nRows; i++)
@@ -831,6 +832,8 @@ void Frame::ComputeStereoMatches()
     vector<pair<int, int> > vDistIdx;
     vDistIdx.reserve(N);
 
+    // There is difference between KeyFrame::UnprojectStereo and Frame::UnprojectStereo
+    // Should we use the mvKeysUn instead of mvKeys??
     for(int iL=0; iL<N; iL++)
     {
         const cv::KeyPoint &kpL = mvKeys[iL];
@@ -838,6 +841,7 @@ void Frame::ComputeStereoMatches()
         const float &vL = kpL.pt.y;
         const float &uL = kpL.pt.x;
 
+        // possible matches
         const vector<size_t> &vCandidates = vRowIndices[vL];
 
         if(vCandidates.empty())
@@ -950,6 +954,7 @@ void Frame::ComputeStereoMatches()
                     disparity=0.01;
                     bestuR = uL-0.01;
                 }
+                // Here we get the depth of the keypoint by depth = baseline * fx / disparity
                 mvDepth[iL]=mbf/disparity;
                 mvuRight[iL] = bestuR;
                 vDistIdx.push_back(pair<int,int>(bestDist,iL));
@@ -971,6 +976,7 @@ void Frame::ComputeStereoMatches()
             mvDepth[vDistIdx[i].second]=-1;
         }
     }
+    // TODO: Maybe we will output mvDepth here?
 }
 
 
@@ -1000,6 +1006,7 @@ void Frame::ComputeStereoFromRGBD(const cv::Mat &imDepth)
 cv::Mat Frame::UnprojectStereo(const int &i)
 {
     const float z = mvDepth[i];
+    cout << "Test depth output: "<< z << endl;
     if(z>0)
     {
         const float u = mvKeysUn[i].pt.x;

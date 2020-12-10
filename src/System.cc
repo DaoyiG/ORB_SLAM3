@@ -273,13 +273,18 @@ cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const
             mpTracker->GrabImuData(vImuMeas[i_imu]);
 
     // std::cout << "start GrabImageStereo" << std::endl;
+
+    // Tcw is the transformation matrix from the world frame to the current camera frame
+    // which is the configuration of the camera
     cv::Mat Tcw = mpTracker->GrabImageStereo(imLeft,imRight,timestamp,filename);
 
     // std::cout << "out grabber" << std::endl;
 
     unique_lock<mutex> lock2(mMutexState);
     mTrackingState = mpTracker->mState;
+    // This is a vector that contains the pointer to the map points that the current frame tracks
     mTrackedMapPoints = mpTracker->mCurrentFrame.mvpMapPoints;
+
     mTrackedKeyPointsUn = mpTracker->mCurrentFrame.mvKeysUn;
 
     return Tcw;

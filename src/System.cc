@@ -299,9 +299,8 @@ cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const
             Anchor.at<float>(static_cast<int>(v), static_cast<int>(u)) = z;
         }
     }
-    // cout << "time 100   " << std::to_string(timestamp*100) << endl;
-//    cout << "timestamp passed in   " << timestampnum << endl;
-//    cout << "mnid   " << mpTracker->mCurrentFrame.mnId << endl;
+
+    // cout << "mnid   " << mpTracker->mCurrentFrame.mnId << endl;
     cv::imwrite("/home/daoyig/ORB_SLAM3/Results/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".png", Anchor);
 
     return Tcw;

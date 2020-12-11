@@ -2933,7 +2933,7 @@ void Tracking::SearchLocalPoints()
     }
 
     int nToMatch=0;
-
+    cv::Mat AnchorMap = cv::Mat::zeros(376, 1241, CV_32FC1);
     // Project points in frame and check its visibility
     for(vector<MapPoint*>::iterator vit=mvpLocalMapPoints.begin(), vend=mvpLocalMapPoints.end(); vit!=vend; vit++)
     {
@@ -2948,12 +2948,17 @@ void Tracking::SearchLocalPoints()
         {
             pMP->IncreaseVisible();
             nToMatch++;
+
+            float z = pMP->GetWorldPos().at<float>(2);
+            // cout << "test output map point z   " << z << endl;
+            AnchorMap.at<float>(static_cast<int>(pMP->mTrackProjY), static_cast<int>(pMP->mTrackProjX)) = z;
         }
         if(pMP->mbTrackInView)
         {
             mCurrentFrame.mmProjectPoints[pMP->mnId] = cv::Point2f(pMP->mTrackProjX, pMP->mTrackProjY);
         }
     }
+    cv::imwrite("/home/daoyig/ORB_SLAM3/Results_mappoint/" + std::to_string(mCurrentFrame.mnId) + ".png", AnchorMap);
 
     if(nToMatch>0)
     {

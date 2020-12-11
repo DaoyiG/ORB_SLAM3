@@ -286,23 +286,23 @@ cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const
     mTrackedMapPoints = mpTracker->mCurrentFrame.mvpMapPoints;
 
     mTrackedKeyPointsUn = mpTracker->mCurrentFrame.mvKeysUn;
+
+    // Save the depth of the keypoints as our anchor map
     cv::Mat Anchor = cv::Mat::zeros(376, 1241, CV_32FC1);
 
     for (int i = 0; i < mpTracker->mCurrentFrame.mvKeysUn.size()-1; ++i) {
-        // cout << "success inside loop" << endl;
         const float z = mpTracker->mCurrentFrame.mvDepth[i];
-        // cout << z << endl;
         if (z > 0){
             const cv::KeyPoint &kp = mpTracker->mCurrentFrame.mvKeysUn[i];
             float u = kp.pt.x;
             float v = kp.pt.y;
-            // cout << "kp " << i << " u " << u << endl;
-            // cout << "kp " << i << " v " << v << endl;
             Anchor.at<float>(static_cast<int>(v), static_cast<int>(u)) = z;
         }
     }
-
-    cv::imwrite("/home/daoyig/ORB_SLAM3/Results/" + std::to_string(static_cast<int>(timestamp)) + ".png", Anchor);
+    // cout << "time 100   " << std::to_string(timestamp*100) << endl;
+//    cout << "timestamp passed in   " << timestampnum << endl;
+//    cout << "mnid   " << mpTracker->mCurrentFrame.mnId << endl;
+    cv::imwrite("/home/daoyig/ORB_SLAM3/Results/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".png", Anchor);
 
     return Tcw;
 }

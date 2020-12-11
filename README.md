@@ -2,8 +2,17 @@
 1. add more comments  
 2. possible bug? Frame.cc 837 in this loop, should we use mvKeysUn instead of mvKeys? Because we apply the depth calculated from mvKeys to mvKeysUn in Frame::UnprojectStereo   
 3. need to decide which depth we really need:  
-   Frame.cc 958 calculate depth based on baseline * fx / disparity and after line 976, the remaining positive values in mvDepth should be the depth of the matched keypoints
-
+   Frame.cc 958 calculate depth based on baseline * fx / disparity and after line 976, the remaining positive values in mvDepth should be the depth of the matched keypoints  
+   System.cc 290 can save the depth as well, currently we save the depth at this level  
+4. how to run this project:  
+   If you haven't built ORB SLAM3 before, then just follow the instruction of the building process from the original ORB SLAM 3;  
+   If you have modified the code and just want to re-build the slam part, then just:  
+   ```
+   chmod +x build_ORB.sh
+   ./build_ORB.sh
+   ```
+   This will remove the build folder under ```ORB_SLAM3``` first and then make a new build directory to build the system.   
+5. You can modify the path of the dataset in ```kitti_example.sh``` and run it to see the results of stereo input from a sample kitti dataset.
 # ORB-SLAM3
 
 ### V0.3: Beta version, 4 Sep 2020

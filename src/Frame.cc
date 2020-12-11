@@ -837,6 +837,8 @@ void Frame::ComputeStereoMatches()
     for(int iL=0; iL<N; iL++)
     {
         const cv::KeyPoint &kpL = mvKeys[iL];
+        // MARK: change to use undistorted keypoint here?
+        // const cv::KeyPoint &kpL = mvKeysUn[iL];
         const int &levelL = kpL.octave;
         const float &vL = kpL.pt.y;
         const float &uL = kpL.pt.x;
@@ -958,6 +960,7 @@ void Frame::ComputeStereoMatches()
                 mvDepth[iL]=mbf/disparity;
                 mvuRight[iL] = bestuR;
                 vDistIdx.push_back(pair<int,int>(bestDist,iL));
+
             }
         }
     }
@@ -977,6 +980,24 @@ void Frame::ComputeStereoMatches()
         }
     }
     // TODO: Maybe we will output mvDepth here?
+    // To store the depth of the keypoints
+//    cv::Mat keypointsAnchor = cv::Mat::zeros(376, 1241, CV_32FC1);
+//    cout << "test number1, mvdepth size" << mvDepth.size() << endl;
+//    cout << "test number2, vDistIdx size" << vDistIdx.size() << endl;
+//    cout << "test number2, N " << N << endl;
+
+//    for (int i = 0; i < vDistIdx.size()-1; ++i) {
+//        const float z = mvDepth[i];
+//        if (z > 0){
+//            const cv::KeyPoint &kp = mvKeys[i];
+//            const float &u = kp.pt.x;
+//            const float &v = kp.pt.y;
+//            keypointsAnchor.at<float>(u, v) = z;
+//        }
+//    }
+
+    // cv::imwrite("/home/daoyig/ORB_SLAM3/Results/" + std::to_string(mnId) + ".png", keypointsAnchor);
+
 }
 
 
@@ -1006,7 +1027,7 @@ void Frame::ComputeStereoFromRGBD(const cv::Mat &imDepth)
 cv::Mat Frame::UnprojectStereo(const int &i)
 {
     const float z = mvDepth[i];
-    cout << "Test depth output: "<< z << endl;
+    // cout << "Test depth output: "<< z << endl;
     if(z>0)
     {
         const float u = mvKeysUn[i].pt.x;

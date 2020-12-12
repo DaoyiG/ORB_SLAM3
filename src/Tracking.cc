@@ -2933,7 +2933,9 @@ void Tracking::SearchLocalPoints()
     }
 
     int nToMatch=0;
-//    cv::Mat AnchorMap = cv::Mat::zeros(376, 1241, CV_32FC1);
+    cv::Mat AnchorMap = cv::Mat::zeros(375, 1242, CV_32FC1);
+    cv::FileStorage file("/home/daoyig/ORB_SLAM3_old/Results_mappoint/" + std::to_string(mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
+
     // Project points in frame and check its visibility
     for(vector<MapPoint*>::iterator vit=mvpLocalMapPoints.begin(), vend=mvpLocalMapPoints.end(); vit!=vend; vit++)
     {
@@ -2943,23 +2945,44 @@ void Tracking::SearchLocalPoints()
             continue;
         if(pMP->isBad())
             continue;
+
         // Project (this fills MapPoint variables for matching)
         if(mCurrentFrame.isInFrustum(pMP,0.5))
         {
             pMP->IncreaseVisible();
             nToMatch++;
 
-//            float z = pMP->GetWorldPos().at<float>(2);
-//            // cout << "test output map point z   " << z << endl;
-//            AnchorMap.at<float>(static_cast<int>(pMP->mTrackProjY), static_cast<int>(pMP->mTrackProjX)) = z;
+            // 3D in absolute coordinates
+            cv::Mat P = pMP->GetWorldPos();
+            cv::Mat Tcw = mCurrentFrame.mTcw.clone();
+            cv::Mat Rcw = Tcw.rowRange(0, 3).colRange(0, 3);
+            cv::Mat tcw = Tcw.rowRange(0, 3).col(3);
+
+            // 3D in camera coordinates
+            cv::Mat Pc = Rcw*P+tcw;
+            float &PcX = Pc.at<float>(0);
+            float &PcY = Pc.at<float>(1);
+            float &PcZ = Pc.at<float>(2);
+
+            // Project in image and check it is not outside
+            const float invz = 1.0f/PcZ;
+            float u = mCurrentFrame.fx*PcX*invz+mCurrentFrame.cx;
+            float v = mCurrentFrame.fy*PcY*invz+mCurrentFrame.cy;
+
+            // cout << "c";
+
+            AnchorMap.at<float>(static_cast<int>(v), static_cast<int>(u)) = PcZ;
         }
+
         if(pMP->mbTrackInView)
         {
             mCurrentFrame.mmProjectPoints[pMP->mnId] = cv::Point2f(pMP->mTrackProjX, pMP->mTrackProjY);
         }
     }
-//    cout << "test mnid  " << std::to_string(mCurrentFrame.mnId) << endl;
-//    cv::imwrite("/home/daoyig/ORB_SLAM3/Results_mappoint/" + std::to_string(mCurrentFrame.mnId) + ".png", AnchorMap);
+
+//    cv::imwrite("/home/hanzhic/ORB_SLAM3/Results_mappoint/" + std::to_string(mCurrentFrame.mnId) + ".png", AnchorMap);
+    file << "depth" << AnchorMap;
+    file.release();
 
     if(nToMatch>0)
     {

@@ -287,12 +287,13 @@ cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const
 
     // save the mappoint as anchor point
     cv::Mat AnchorMap = cv::Mat::zeros(imLeft.rows, imLeft.cols, CV_32FC1);
-    cv::FileStorage mpfile(resultPath + "Results_mappoint/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
+    cv::FileStorage mpfile(resultPath + "Results_map_system/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
 
     for (auto & mTrackedMapPoint : mTrackedMapPoints) {
         MapPoint* pMp = mTrackedMapPoint;
         if (pMp){
             cv::Mat P = pMp->GetWorldPos();
+
             // 3D in camera coordinates
             cv::Mat Rcw = mpTracker->mCurrentFrame.mTcw.colRange(0,3).rowRange(0,3);
             cv::Mat tcw = mpTracker->mCurrentFrame.mTcw.rowRange(0,3).col(3);

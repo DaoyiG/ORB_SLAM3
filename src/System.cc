@@ -285,23 +285,59 @@ cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const
     // This is a vector that contains the pointer to the map points that the current frame tracks
     mTrackedMapPoints = mpTracker->mCurrentFrame.mvpMapPoints;
 
+    // save the mappoint as anchor point
+    cv::Mat AnchorMap = cv::Mat::zeros(376, 1241, CV_32FC1);
+    cv::FileStorage mpfile("/home/daoyig/ORB_SLAM3/Results_mappoint/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
+
+    for (auto & mTrackedMapPoint : mTrackedMapPoints) {
+        MapPoint* pMp = mTrackedMapPoint;
+        if (pMp){
+            cv::Mat P = pMp->GetWorldPos();
+            // 3D in camera coordinates
+            cv::Mat Rcw = mpTracker->mCurrentFrame.mTcw.colRange(0,3).rowRange(0,3);
+            cv::Mat tcw = mpTracker->mCurrentFrame.mTcw.rowRange(0,3).col(3);
+            const cv::Mat Pc = Rcw*P + tcw;
+            const auto &PcX = Pc.at<float>(0);
+            const auto &PcY= Pc.at<float>(1);
+            const auto &PcZ = Pc.at<float>(2);
+
+            // Check positive depth
+            if(PcZ>0.0f)
+            {
+                // Project in image and check it is not outside
+                const float invz = 1.0f/PcZ;
+                float u=ORB_SLAM3::Frame::fx*PcX*invz+ORB_SLAM3::Frame::cx;
+                float v=ORB_SLAM3::Frame::fy*PcY*invz+ORB_SLAM3::Frame::cy;
+                if(u>=-0.5 && v>=-0.5 && u<=1241.5 && v<=376.5){
+                     AnchorMap.at<float>(static_cast<int>(v), static_cast<int>(u)) = PcZ;
+                }
+            }
+         }
+    }
+     mpfile << "depth" << AnchorMap;
+     mpfile.release();
+    // cv::imwrite("/home/daoyig/ORB_SLAM3/Results_mappoint/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".png", AnchorMap);
+
+
     mTrackedKeyPointsUn = mpTracker->mCurrentFrame.mvKeysUn;
 
-    // Save the depth of the keypoints as our anchor map
-    cv::Mat Anchor = cv::Mat::zeros(376, 1241, CV_32FC1);
+    // Save the depth of the key points as a kind of anchor map
+    cv::FileStorage kpfile("/home/daoyig/ORB_SLAM3/Results/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
+    cv::Mat AnchorKey = cv::Mat::zeros(376, 1241, CV_32FC1);
 
-    for (int i = 0; i < mpTracker->mCurrentFrame.mvKeysUn.size()-1; ++i) {
+    for (int i = 0; i < mTrackedKeyPointsUn.size(); ++i) {
         const float z = mpTracker->mCurrentFrame.mvDepth[i];
         if (z > 0){
             const cv::KeyPoint &kp = mpTracker->mCurrentFrame.mvKeysUn[i];
             float u = kp.pt.x;
             float v = kp.pt.y;
-            Anchor.at<float>(static_cast<int>(v), static_cast<int>(u)) = z;
+            AnchorKey.at<float>(static_cast<int>(v), static_cast<int>(u)) = z;
         }
     }
 
-    // cout << "mnid   " << mpTracker->mCurrentFrame.mnId << endl;
-    cv::imwrite("/home/daoyig/ORB_SLAM3/Results/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".png", Anchor);
+    kpfile << "depth" << AnchorKey;
+    kpfile.release();
+   // cv::imwrite("/home/daoyig/ORB_SLAM3/Results/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".png", Anchor);
 
     return Tcw;
 }

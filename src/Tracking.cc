@@ -2933,8 +2933,8 @@ void Tracking::SearchLocalPoints()
     }
 
     int nToMatch=0;
-    cv::Mat AnchorMap = cv::Mat::zeros(375, 1242, CV_32FC1);
-    cv::FileStorage file("/home/daoyig/ORB_SLAM3_old/Results_mappoint/" + std::to_string(mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
+    cv::Mat AnchorMap = cv::Mat::zeros(mCurrentFrame.imgLeft.rows, mCurrentFrame.imgLeft.cols, CV_32FC1);
+    cv::FileStorage file("/home/daoyig/ORB_SLAM3/Results_mappoint/" + std::to_string(mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
 
     // Project points in frame and check its visibility
     for(vector<MapPoint*>::iterator vit=mvpLocalMapPoints.begin(), vend=mvpLocalMapPoints.end(); vit!=vend; vit++)

@@ -286,13 +286,14 @@ cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const
     mTrackedMapPoints = mpTracker->mCurrentFrame.mvpMapPoints;
 
     // save the mappoint as anchor point
-    cv::Mat AnchorMap = cv::Mat::zeros(376, 1241, CV_32FC1);
-    cv::FileStorage mpfile("/home/daoyig/ORB_SLAM3/Results_mappoint/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
+    cv::Mat AnchorMap = cv::Mat::zeros(375, 1242, CV_32FC1);
+    cv::FileStorage mpfile("/home/daoyig/ORB_SLAM3/Results_map_system/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
 
     for (auto & mTrackedMapPoint : mTrackedMapPoints) {
         MapPoint* pMp = mTrackedMapPoint;
         if (pMp){
             cv::Mat P = pMp->GetWorldPos();
+
             // 3D in camera coordinates
             cv::Mat Rcw = mpTracker->mCurrentFrame.mTcw.colRange(0,3).rowRange(0,3);
             cv::Mat tcw = mpTracker->mCurrentFrame.mTcw.rowRange(0,3).col(3);
@@ -323,7 +324,7 @@ cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const
 
     // Save the depth of the key points as a kind of anchor map
     cv::FileStorage kpfile("/home/daoyig/ORB_SLAM3/Results/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
-    cv::Mat AnchorKey = cv::Mat::zeros(376, 1241, CV_32FC1);
+    cv::Mat AnchorKey = cv::Mat::zeros(375, 1242, CV_32FC1);
 
     for (int i = 0; i < mTrackedKeyPointsUn.size(); ++i) {
         const float z = mpTracker->mCurrentFrame.mvDepth[i];

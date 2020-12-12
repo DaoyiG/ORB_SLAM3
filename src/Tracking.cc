@@ -2981,7 +2981,7 @@ void Tracking::SearchLocalPoints()
     }
 
 //    cv::imwrite("/home/hanzhic/ORB_SLAM3/Results_mappoint/" + std::to_string(mCurrentFrame.mnId) + ".png", AnchorMap);
-    file << "Depth" << AnchorMap;
+    file << "depth" << AnchorMap;
     file.release();
 
     if(nToMatch>0)

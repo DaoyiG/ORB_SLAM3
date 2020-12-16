@@ -287,7 +287,7 @@ cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const
 
     // save the mappoint as anchor point
     cv::Mat AnchorMap = cv::Mat::zeros(imLeft.rows, imLeft.cols, CV_32FC1);
-    cv::FileStorage mpfile(resultPath + "Results_map_system/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
+    cv::FileStorage mpfile(resultPath + "Results_Mappoints/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
 
     for (auto & mTrackedMapPoint : mTrackedMapPoints) {
         MapPoint* pMp = mTrackedMapPoint;
@@ -323,21 +323,21 @@ cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const
     mTrackedKeyPointsUn = mpTracker->mCurrentFrame.mvKeysUn;
 
     // Save the depth of the key points as a kind of anchor map
-    cv::FileStorage kpfile(resultPath + "Results/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
-    cv::Mat AnchorKey = cv::Mat::zeros(imLeft.rows, imLeft.cols, CV_32FC1);
+    // cv::FileStorage kpfile(resultPath + "Results/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".xml", cv::FileStorage::WRITE);
+    // cv::Mat AnchorKey = cv::Mat::zeros(imLeft.rows, imLeft.cols, CV_32FC1);
 
-    for (int i = 0; i < mTrackedKeyPointsUn.size(); ++i) {
-        const float z = mpTracker->mCurrentFrame.mvDepth[i];
-        if (z > 0){
-            const cv::KeyPoint &kp = mpTracker->mCurrentFrame.mvKeysUn[i];
-            float u = kp.pt.x;
-            float v = kp.pt.y;
-            AnchorKey.at<float>(static_cast<int>(v), static_cast<int>(u)) = z;
-        }
-    }
+    // for (int i = 0; i < mTrackedKeyPointsUn.size(); ++i) {
+    //     const float z = mpTracker->mCurrentFrame.mvDepth[i];
+    //     if (z > 0){
+    //         const cv::KeyPoint &kp = mpTracker->mCurrentFrame.mvKeysUn[i];
+    //         float u = kp.pt.x;
+    //         float v = kp.pt.y;
+    //         AnchorKey.at<float>(static_cast<int>(v), static_cast<int>(u)) = z;
+    //     }
+    // }
 
-    kpfile << "depth" << AnchorKey;
-    kpfile.release();
+    // kpfile << "depth" << AnchorKey;
+    // kpfile.release();
    // cv::imwrite("/home/daoyig/ORB_SLAM3/Results/" + std::to_string(mpTracker->mCurrentFrame.mnId) + ".png", Anchor);
 
     return Tcw;

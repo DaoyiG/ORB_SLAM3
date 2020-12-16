@@ -49,3 +49,4 @@ cmake-build-release/
 *.osa
 Dataset/*
 .idea
+Results_Mappoints/*

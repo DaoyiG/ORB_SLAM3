@@ -158,7 +158,7 @@ public:
     // Only for stereo and RGB-D. This method does not work for monocular.
     // Call first Shutdown()
     // See format details at: http://www.cvlibs.net/datasets/kitti/eval_odometry.php
-    void SaveTrajectoryKITTI(const string &filename);
+    void SaveTrajectoryKITTI(const string &filename, const string &anchorPath);
 
     // TODO: Save/Load functions
     // SaveMap(const string &filename);
